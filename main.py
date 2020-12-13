@@ -15,6 +15,9 @@ Press Ctrl-C on the command line or send a signal to the process to stop the
 bot.
 """
 
+# TODO: Добавить в бд таблицу с вопросами и забивать от туда по одному
+
+
 import config.token as token_bot
 
 import logging
