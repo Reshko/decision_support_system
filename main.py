@@ -16,7 +16,7 @@ bot.
 """
 
 # TODO: Добавить в бд таблицу с вопросами и забивать от туда по одному
-
+import data_base
 
 import config.token as token_bot
 
@@ -45,9 +45,13 @@ GENDER, PHOTO, LOCATION, BIO = range(4)
 def start(update: Update, context: CallbackContext) -> int:
     reply_keyboard = [['Да.Каждые выходные', 'Иногда', 'Нет']]
 
+    # update.message.reply_text(
+    #     'Привет! Помогу тебе выбрать автомобиль '
+    #     'Вы планиурете поездки на дачу ?\n\n',
+    #     reply_markup=ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True),
+    # )
     update.message.reply_text(
-        'Привет! Помогу тебе выбрать автомобиль '
-        'Вы планиурете поездки на дачу ?\n\n',
+        data_base.get_question(),
         reply_markup=ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True),
     )
 
