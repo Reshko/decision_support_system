@@ -22,6 +22,8 @@ import config.token as token_bot
 
 import logging
 
+import data_base
+
 from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, Update
 from telegram.ext import (
     Updater,
@@ -41,6 +43,8 @@ logger = logging.getLogger(__name__)
 
 FIRST_Q, SECOND_Q, THREE_Q, FOUR_Q = range(4)
 
+count = 0
+
 
 def start(update: Update, context: CallbackContext) -> int:
     reply_keyboard = [['Подобрать автомобиль']]
@@ -54,8 +58,11 @@ def start(update: Update, context: CallbackContext) -> int:
 
 
 def gender(update: Update, context: CallbackContext) -> int:
+    global count
+    count += 1
+    str_question = data_base.get_question(count)
     update.message.reply_text(
-        'Инномарка или БУ',
+        str_question,
         reply_markup=ReplyKeyboardRemove(),
     )
     return SECOND_Q
@@ -63,36 +70,35 @@ def gender(update: Update, context: CallbackContext) -> int:
 
 def pender(update: Update, context: CallbackContext) -> int:
     #logger.info("Gender of %s: %s", user.first_name, update.message.text)
+    global count
+    count += 1
+    str_question = data_base.get_question(count)
     update.message.reply_text(
-        'Состояние 2',
+        str_question,
         reply_markup=ReplyKeyboardRemove(),
     )
-    if update.message.text == '3':
-        print("3")
-
-        return THREE_Q
-    elif update.message.text == '4':
-        print("4")
-
-        return FOUR_Q
-    else:
-        print('asdasd')
-
+    return THREE_Q
 
 
 def fender(update: Update, context: CallbackContext) -> int:
     #logger.info("Gender of %s: %s", user.first_name, update.message.text)
+    global count
+    count += 1
+    str_question = data_base.get_question(count)
     update.message.reply_text(
-        'Вы попали в фендер',
+        str_question,
         reply_markup=ReplyKeyboardRemove(),
     )
 
-    return ConversationHandler.END
+    return FOUR_Q
 
 def blender(update: Update, context: CallbackContext) -> int:
     #logger.info("Gender of %s: %s", user.first_name, update.message.text)
+    global count
+    count += 1
+    str_question = data_base.get_question(count)
     update.message.reply_text(
-        'Вы попали в блендер',
+        str_question,
         reply_markup=ReplyKeyboardRemove(),
     )
 
