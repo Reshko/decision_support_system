@@ -61,9 +61,10 @@ def gender(update: Update, context: CallbackContext) -> int:
     global count
     count += 1
     str_question = data_base.get_question(count)
+    reply_keyboard = [list(data_base.get_answers(count))]
     update.message.reply_text(
         str_question,
-        reply_markup=ReplyKeyboardRemove(),
+        reply_markup=ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True),
     )
     return SECOND_Q
 
@@ -71,11 +72,12 @@ def gender(update: Update, context: CallbackContext) -> int:
 def pender(update: Update, context: CallbackContext) -> int:
     #logger.info("Gender of %s: %s", user.first_name, update.message.text)
     global count
+    reply_keyboard = [list(data_base.get_answers(count))]
     count += 1
     str_question = data_base.get_question(count)
     update.message.reply_text(
         str_question,
-        reply_markup=ReplyKeyboardRemove(),
+        reply_markup=ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True),
     )
     return THREE_Q
 
@@ -83,11 +85,12 @@ def pender(update: Update, context: CallbackContext) -> int:
 def fender(update: Update, context: CallbackContext) -> int:
     #logger.info("Gender of %s: %s", user.first_name, update.message.text)
     global count
+    reply_keyboard = [list(data_base.get_answers(count))]
     count += 1
     str_question = data_base.get_question(count)
     update.message.reply_text(
         str_question,
-        reply_markup=ReplyKeyboardRemove(),
+        reply_markup=ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True),
     )
 
     return FOUR_Q
@@ -95,11 +98,12 @@ def fender(update: Update, context: CallbackContext) -> int:
 def blender(update: Update, context: CallbackContext) -> int:
     #logger.info("Gender of %s: %s", user.first_name, update.message.text)
     global count
+    reply_keyboard = [list(data_base.get_answers(count))]
     count += 1
     str_question = data_base.get_question(count)
     update.message.reply_text(
         str_question,
-        reply_markup=ReplyKeyboardRemove(),
+        reply_markup=ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True),
     )
 
     return ConversationHandler.END
