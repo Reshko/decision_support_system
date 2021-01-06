@@ -1,0 +1,12 @@
+id;question;answer1;answer2;answer3;answer4
+1;New or used?;Yes;No;;
+2;Probeg auto?;do 100 000 km;ot 100 000 do 200 000 km;ot 200 000 do 300 000 km;ot 300 000 and more
+3;Number owners?;1;2-3;3 and more;
+4;Color used?;White;Black;Brown;Yellow
+5;broken-down car?;Yes;No;;
+6;Country maker?;Germany;Japan;Korea;Russion
+7;Auto to every day?;Yes;No;;
+8;Number of family members?;1;2;3;3 and more
+9;Protecting the safety?;Yes;No;Don't know;
+10;Plan to travel farther?;Yes;No;Don`t know;
+11;КУ-КУ ЕПТЫ;;;;

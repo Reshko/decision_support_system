@@ -1,5 +1,11 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# pylint: disable=W0613, C0116
+# type: ignore[union-attr]
+# This program is dedicated to the public domain under the CC0 license.
+
 import sqlite3
-import json
+import csv
 
 __connection = None
 
@@ -10,23 +16,36 @@ def get_connection():
         __connection = sqlite3.connect('questions.db')
     return __connection
 
+
 def init_db(force: bool = False):
     conn = get_connection()
     c = conn.cursor()
 
     if force:
-        c.execute('DROP TABLE IF EXISTS questions')
+        c.execute('DROP TABLE IF EXISTS Quest')
 
-    c.execute('''
-        CREATE TABLE IF NOT EXISTS questions(
-            id      INTEGER PRIMARY KEY,
-            question   TEXT NOT NULL,
-            answer_1 TEXT,
-            answer_2 TEXT,
-            answer_3 TEXT,
-            parametr TEXT
-        )
-    ''')
+    with open('database_config/quest.txt', encoding='utf-8') as csv_file:
+        csv_reader = csv.reader(csv_file, delimiter=';')
+        print(csv_file)
+        line_count = 0
+        for row in csv_reader:
+            if line_count == 0:
+                #  print(f'Column names are {", ".join(row)}')
+                c.execute('''
+                    CREATE TABLE IF NOT EXISTS Quest(
+                        id      INTEGER PRIMARY KEY,
+                        question   TEXT NOT NULL,
+                        answer1 TEXT,
+                        answer2 TEXT,
+                        answer3 TEXT,
+                        answer4 TEXT
+                    )
+                ''')
+                line_count += 1
+            else:
+                print(row[1])
+                c.execute('INSERT INTO Quest VALUES (?,?,?,?,?,?)', (row[0], row[1], row[2], row[3], row[4], row[5]))
+                line_count += 1
 
 
     # TODO Сделать автоматическое вливание вопросов
@@ -52,7 +71,10 @@ def get_answers(id_quest: int):
     (res,) = c.fetchall()
     return res
 
+
 if __name__ == '__main__':
     init_db(force=True)
+
+
 
 
