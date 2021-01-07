@@ -23,6 +23,8 @@ def init_db(force: bool = False):
 
     if force:
         c.execute('DROP TABLE IF EXISTS Quest')
+        c.execute('DROP TABLE IF EXISTS Answer')
+        c.execute('DROP TABLE IF EXISTS QuestRules')
 
     with open('database_config/quest.txt', encoding='utf-8') as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=';')
@@ -30,10 +32,9 @@ def init_db(force: bool = False):
         line_count = 0
         for row in csv_reader:
             if line_count == 0:
-                #  print(f'Column names are {", ".join(row)}')
                 c.execute('''
                     CREATE TABLE IF NOT EXISTS Quest(
-                        id      INTEGER PRIMARY KEY,
+                        id_quest      INTEGER PRIMARY KEY,
                         question   TEXT NOT NULL,
                         answer1 TEXT,
                         answer2 TEXT,
@@ -47,14 +48,26 @@ def init_db(force: bool = False):
                 c.execute('INSERT INTO Quest VALUES (?,?,?,?,?,?)', (row[0], row[1], row[2], row[3], row[4], row[5]))
                 line_count += 1
 
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS Answer(
+            id_answer      INTEGER PRIMARY KEY,
+            id_telegram   INTEGER NOT NULL,
+            answer1 TEXT NOT NULL
+        )
+    ''')
 
-    # TODO Сделать автоматическое вливание вопросов
-    # Вливание данных из файла в бд
-    #for i in _group:
-        #c.execute('INSERT INTO all_group (numberGroup) VALUES (?)', (i,))
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS QuestRules(
+            id_qr      INTEGER PRIMARY KEY,
+            if_par   INTEGER NOT NULL,
+            then_value TEXT NOT NULL,
+            next_quest INTEGER NOT NULL 
+        )
+    ''')
 
     # Сохранение изменений
     conn.commit()
+
 
 def get_question(id_quest: int):
     conn = get_connection()
@@ -74,7 +87,3 @@ def get_answers(id_quest: int):
 
 if __name__ == '__main__':
     init_db(force=True)
-
-
-
-
