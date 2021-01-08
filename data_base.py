@@ -28,7 +28,6 @@ def init_db(force: bool = False):
 
     with open('database_config/quest.txt', encoding='utf-8') as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=';')
-        print(csv_file)
         line_count = 0
         for row in csv_reader:
             if line_count == 0:
@@ -44,7 +43,6 @@ def init_db(force: bool = False):
                 ''')
                 line_count += 1
             else:
-                print(row[1])
                 c.execute('INSERT INTO Quest VALUES (?,?,?,?,?,?)', (row[0], row[1], row[2], row[3], row[4], row[5]))
                 line_count += 1
 
@@ -72,7 +70,7 @@ def init_db(force: bool = False):
 def get_question(id_quest: int):
     conn = get_connection()
     c = conn.cursor()
-    c.execute('SELECT question FROM questions WHERE id =? ', (id_quest,))
+    c.execute('SELECT question FROM Quest WHERE id_quest =? ', (id_quest,))
     (res,) = c.fetchone()
     return res
 
@@ -85,5 +83,13 @@ def get_answers(id_quest: int):
     return res
 
 
+def get_quest_info(id_quest: int):
+    conn = get_connection()
+    c = conn.cursor()
+    c.execute('SELECT * FROM Quest WHERE id_quest =?', (id_quest,))
+    (res,) = c.fetchall()
+    return res
+
+
 if __name__ == '__main__':
-    init_db(force=True)
+    pass
