@@ -7,6 +7,7 @@
 import sqlite3
 import csv
 
+
 __connection = None
 
 
@@ -48,8 +49,8 @@ def init_db(force: bool = False):
 
     c.execute('''
         CREATE TABLE IF NOT EXISTS Answer(
-            id_answer      INTEGER PRIMARY KEY,
-            id_telegram   INTEGER NOT NULL,
+            id_answer       INTEGER PRIMARY KEY AUTOINCREMENT,
+            id_telegram      INTEGER NOT NULL,
             answer1 TEXT NOT NULL
         )
     ''')
@@ -57,8 +58,9 @@ def init_db(force: bool = False):
     c.execute('''
         CREATE TABLE IF NOT EXISTS QuestRules(
             id_qr      INTEGER PRIMARY KEY,
-            if_par   INTEGER NOT NULL,
-            then_value TEXT NOT NULL,
+            id_question INTEGER NOT NULL,
+            if_par   TEXT,
+            then_value TEXT,
             next_quest INTEGER NOT NULL 
         )
     ''')
@@ -67,12 +69,14 @@ def init_db(force: bool = False):
     conn.commit()
 
 
+
 def get_question(id_quest: int):
     conn = get_connection()
     c = conn.cursor()
     c.execute('SELECT question FROM Quest WHERE id_quest =? ', (id_quest,))
     (res,) = c.fetchone()
     return res
+
 
 
 def get_answers(id_quest: int):
@@ -91,5 +95,13 @@ def get_quest_info(id_quest: int):
     return res
 
 
+def update_date(id_user:int, answer_user: str):
+    conn = get_connection()
+    c = conn.cursor()
+    c.execute('INSERT INTO Answer(id_telegram,answer1) VALUES (?,?)',
+              (id_user, answer_user))
+    conn.commit()
+
+
 if __name__ == '__main__':
-    pass
+    init_db(force=True)

@@ -30,7 +30,7 @@ logging.basicConfig(
 )
 
 logger = logging.getLogger(__name__)
-
+number_question = 0
 
 def debug_requests(f):
     def inner(*args, **kwargs):
@@ -55,7 +55,7 @@ def start(update: Update, context: CallbackContext) -> int:
     user = update.message.from_user
     update.message.reply_text(
         f'Привет {user.first_name}. Помогу тебе подобрать автомобиль,согласно твоим предпочтениям.',
-        reply_markup=ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True),
+        reply_markup=ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True, resize_keyboard=True),
     )
     return FIRST_QUESTION
 
@@ -73,8 +73,9 @@ def first_question(update: Update, context: CallbackContext) -> int:
 @debug_requests
 def questions(update: Update, context: CallbackContext) -> int:
     user_answer = update.message.text
-    print(user_answer)
-    update.message.reply_text("ЦИКЛ ЦИКЛ ЦИКЛ")
+    user_id = update.message.chat.id
+    db.update_date(user_id, user_answer)
+
     return QUESTIONS
 
 
@@ -83,6 +84,7 @@ def cancel():
     pass
 
 
+@debug_requests
 def info_about_quest():
     list_quest_answ = [x for x in db.get_quest_info(id_quest=1) if x]
     quest = list_quest_answ[1]
@@ -90,6 +92,7 @@ def info_about_quest():
     logger.info(f'Вопрос {quest}')
     logger.info(f'Ответы {answ}')
     return quest, answ
+
 
 
 def main():
