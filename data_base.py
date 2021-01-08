@@ -7,7 +7,6 @@
 import sqlite3
 import csv
 
-
 __connection = None
 
 
@@ -27,8 +26,8 @@ def init_db(force: bool = False):
         c.execute('DROP TABLE IF EXISTS Answer')
         c.execute('DROP TABLE IF EXISTS QuestRules')
 
-    with open('database_config/quest.txt', encoding='utf-8') as csv_file:
-        csv_reader = csv.reader(csv_file, delimiter=';')
+    with open('database_config/main_Quest.csv', encoding='utf-8') as csv_file:
+        csv_reader = csv.reader(csv_file, delimiter=',')
         line_count = 0
         for row in csv_reader:
             if line_count == 0:
@@ -47,6 +46,25 @@ def init_db(force: bool = False):
                 c.execute('INSERT INTO Quest VALUES (?,?,?,?,?,?)', (row[0], row[1], row[2], row[3], row[4], row[5]))
                 line_count += 1
 
+    with open('database_config/main_QuestRules.csv', encoding='utf-8') as csv_file:
+        csv_reader = csv.reader(csv_file, delimiter=',')
+        line_count = 0
+        for row in csv_reader:
+            if line_count == 0:
+                c.execute('''
+                    CREATE TABLE IF NOT EXISTS QuestRules(
+                        id_qr      INTEGER PRIMARY KEY,
+                        id_question INTEGER NOT NULL,
+                        if_par   TEXT,
+                        then_value TEXT,
+                        next_quest INTEGER NOT NULL 
+                    )
+                ''')
+                line_count += 1
+            else:
+                c.execute('INSERT INTO QuestRules VALUES (?,?,?,?,?)', (row[0], row[1], row[2], row[3], row[4]))
+                line_count += 1
+
     c.execute('''
         CREATE TABLE IF NOT EXISTS Answer(
             id_answer       INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -55,19 +73,8 @@ def init_db(force: bool = False):
         )
     ''')
 
-    c.execute('''
-        CREATE TABLE IF NOT EXISTS QuestRules(
-            id_qr      INTEGER PRIMARY KEY,
-            id_question INTEGER NOT NULL,
-            if_par   TEXT,
-            then_value TEXT,
-            next_quest INTEGER NOT NULL 
-        )
-    ''')
-
     # Сохранение изменений
     conn.commit()
-
 
 
 def get_question(id_quest: int):
@@ -76,7 +83,6 @@ def get_question(id_quest: int):
     c.execute('SELECT question FROM Quest WHERE id_quest =? ', (id_quest,))
     (res,) = c.fetchone()
     return res
-
 
 
 def get_answers(id_quest: int):
@@ -95,12 +101,36 @@ def get_quest_info(id_quest: int):
     return res
 
 
-def update_date(id_user:int, answer_user: str):
+def update_date(id_user: int, answer_user: str):
     conn = get_connection()
     c = conn.cursor()
     c.execute('INSERT INTO Answer(id_telegram,answer1) VALUES (?,?)',
               (id_user, answer_user))
     conn.commit()
+
+
+def get_quest_info(id_quest: int):
+    conn = get_connection()
+    c = conn.cursor()
+    c.execute('SELECT * FROM Quest WHERE id_quest =?', (id_quest,))
+    (res,) = c.fetchall()
+    return res
+
+
+def check_empty_table():
+    conn = get_connection()
+    c = conn.cursor()
+    c.execute('SELECT COUNT(*) FROM Answer')
+    (res,) = c.fetchone()
+    return res
+
+
+def quest_rules(if_par: str, id_question: int):
+    conn = get_connection()
+    c = conn.cursor()
+    c.execute('SELECT next_quest FROM QuestRules WHERE if_par = ? AND id_question = ?', (if_par, id_question))
+    (res,) = c.fetchone()
+    return res
 
 
 if __name__ == '__main__':

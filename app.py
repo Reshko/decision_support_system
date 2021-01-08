@@ -30,7 +30,7 @@ logging.basicConfig(
 )
 
 logger = logging.getLogger(__name__)
-number_question = 0
+
 
 def debug_requests(f):
     def inner(*args, **kwargs):
@@ -72,9 +72,19 @@ def first_question(update: Update, context: CallbackContext) -> int:
 
 @debug_requests
 def questions(update: Update, context: CallbackContext) -> int:
-    user_answer = update.message.text
-    user_id = update.message.chat.id
-    db.update_date(user_id, user_answer)
+
+    if db.check_empty_table() != 0:
+        user_answer = update.message.text
+        user_id = update.message.chat.id
+        #db.update_date(user_id, user_answer)
+    else:
+        user_answer = update.message.text
+        user_id = update.message.chat.id
+        #db.update_date(user_id, user_answer)
+        number_next_question = db.quest_rules(user_answer,1)
+        print(number_next_question)
+
+
 
     return QUESTIONS
 
