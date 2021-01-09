@@ -70,21 +70,31 @@ def first_question(update: Update, context: CallbackContext) -> int:
     return QUESTIONS
 
 
+#   TODO Много дублирования кода - избавляемся
 @debug_requests
 def questions(update: Update, context: CallbackContext) -> int:
-
     if db.check_empty_table() != 0:
         user_answer = update.message.text
         user_id = update.message.chat.id
         #db.update_date(user_id, user_answer)
+        number_next_question = db.quest_rules(user_answer, 1)
+        quest, answers = info_about_quest(
+            id_quest=number_next_question)  # Передаем полученный ранее номер следующего вопроса
+        update.message.reply_text(
+            quest,
+            reply_markup=ReplyKeyboardMarkup([answers], one_time_keyboard=True, resize_keyboard=True),
+        )
     else:
         user_answer = update.message.text
         user_id = update.message.chat.id
         #db.update_date(user_id, user_answer)
-        number_next_question = db.quest_rules(user_answer,1)
-        print(number_next_question)
-
-
+        number_next_question = db.quest_rules(user_answer, 1)
+        quest, answers = info_about_quest(
+            id_quest=number_next_question)  # Передаем полученный ранне номер следующего вопроса
+        update.message.reply_text(
+            quest,
+            reply_markup=ReplyKeyboardMarkup([answers], one_time_keyboard=True, resize_keyboard=True),
+        )
 
     return QUESTIONS
 
@@ -95,14 +105,13 @@ def cancel():
 
 
 @debug_requests
-def info_about_quest():
-    list_quest_answ = [x for x in db.get_quest_info(id_quest=1) if x]
+def info_about_quest(id_quest: int = 1):
+    list_quest_answ = [x for x in db.get_quest_info(id_quest) if x]
     quest = list_quest_answ[1]
     answ = list_quest_answ[2::]
     logger.info(f'Вопрос {quest}')
     logger.info(f'Ответы {answ}')
     return quest, answ
-
 
 
 def main():
