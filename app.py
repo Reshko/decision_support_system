@@ -45,6 +45,7 @@ def debug_requests(f):
 
 
 FIRST_QUESTION, QUESTIONS = range(2)
+number_quest = 0
 
 
 @debug_requests
@@ -62,40 +63,28 @@ def start(update: Update, context: CallbackContext) -> int:
 
 @debug_requests
 def first_question(update: Update, context: CallbackContext) -> int:
-    quest, answers = info_about_quest()
+    global number_quest
+    number_quest, quest, answers = info_about_quest()
     update.message.reply_text(
         quest,
         reply_markup=ReplyKeyboardMarkup([answers], one_time_keyboard=True, resize_keyboard=True),
     )
     return QUESTIONS
 
-
-#   TODO Много дублирования кода - избавляемся
 @debug_requests
 def questions(update: Update, context: CallbackContext) -> int:
-    if db.check_empty_table() != 0:
-        user_answer = update.message.text
-        user_id = update.message.chat.id
-        #db.update_date(user_id, user_answer)
-        number_next_question = db.quest_rules(user_answer, 1)
-        quest, answers = info_about_quest(
-            id_quest=number_next_question)  # Передаем полученный ранее номер следующего вопроса
-        update.message.reply_text(
-            quest,
-            reply_markup=ReplyKeyboardMarkup([answers], one_time_keyboard=True, resize_keyboard=True),
-        )
-    else:
-        user_answer = update.message.text
-        user_id = update.message.chat.id
-        #db.update_date(user_id, user_answer)
-        number_next_question = db.quest_rules(user_answer, 1)
-        quest, answers = info_about_quest(
-            id_quest=number_next_question)  # Передаем полученный ранне номер следующего вопроса
-        update.message.reply_text(
-            quest,
-            reply_markup=ReplyKeyboardMarkup([answers], one_time_keyboard=True, resize_keyboard=True),
-        )
-
+    user_answer = update.message.text
+    user_id = update.message.chat.id
+    global number_quest
+    #db.update_date(user_id, user_answer)
+    number_next_question = db.quest_rules(user_answer, number_quest)
+    new_number_quest, quest, answers = info_about_quest(
+        id_quest=number_next_question)  # Передаем полученный ранее номер следующего вопроса
+    update.message.reply_text(
+        quest,
+        reply_markup=ReplyKeyboardMarkup([answers], one_time_keyboard=True, resize_keyboard=True),
+    )
+    number_quest = new_number_quest
     return QUESTIONS
 
 
@@ -107,11 +96,12 @@ def cancel():
 @debug_requests
 def info_about_quest(id_quest: int = 1):
     list_quest_answ = [x for x in db.get_quest_info(id_quest) if x]
+    number_quest = list_quest_answ[0]
     quest = list_quest_answ[1]
     answ = list_quest_answ[2::]
     logger.info(f'Вопрос {quest}')
     logger.info(f'Ответы {answ}')
-    return quest, answ
+    return number_quest, quest, answ
 
 
 def main():
