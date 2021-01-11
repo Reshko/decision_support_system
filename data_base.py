@@ -53,15 +53,16 @@ def init_db(force: bool = False):
             if line_count == 0:
                 c.execute('''
                     CREATE TABLE IF NOT EXISTS QuestRules(
-                        id_qr      INTEGER PRIMARY KEY,
+                        id_qr INTEGER PRIMARY KEY,
                         id_question INTEGER NOT NULL,
+                        name_question TEXT,
                         if_par   TEXT,
-                        then_value TEXT,
                         next_quest INTEGER NOT NULL 
                     )
                 ''')
                 line_count += 1
             else:
+                print(row[0], row[1], row[2], row[3], row[4])
                 c.execute('INSERT INTO QuestRules VALUES (?,?,?,?,?)', (row[0], row[1], row[2], row[3], row[4]))
                 line_count += 1
 

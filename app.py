@@ -71,6 +71,10 @@ def first_question(update: Update, context: CallbackContext) -> int:
     )
     return QUESTIONS
 
+
+# TODO Заполнить таблицу QuestRules
+# TODO Реализовать хранением ответов пользователя UDP:Таблица с колонками вопросов
+#  || создать объект user_id {question:answer ... }
 @debug_requests
 def questions(update: Update, context: CallbackContext) -> int:
     user_answer = update.message.text
@@ -94,7 +98,7 @@ def cancel():
 
 
 @debug_requests
-def info_about_quest(id_quest: int = 1):
+def info_about_quest(id_quest: int = 12):
     list_quest_answ = [x for x in db.get_quest_info(id_quest) if x]
     number_quest = list_quest_answ[0]
     quest = list_quest_answ[1]
