@@ -75,6 +75,7 @@ def first_question(update: Update, context: CallbackContext) -> int:
 # TODO Заполнить таблицу QuestRules
 # TODO Реализовать хранением ответов пользователя UDP:Таблица с колонками вопросов
 #  || создать объект user_id {question:answer ... }
+# TODO глобальные переменные
 @debug_requests
 def questions(update: Update, context: CallbackContext) -> int:
     user_answer = update.message.text
