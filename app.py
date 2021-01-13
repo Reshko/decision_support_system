@@ -20,6 +20,7 @@ bot.
 import logging
 
 import data_base as db
+from config import token as tk
 
 from telegram import Update, ReplyKeyboardMarkup
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext, ConversationHandler
@@ -40,7 +41,6 @@ def debug_requests(f):
         except Exception:
             logger.exception(f"Ошибка в обработчике {f.__name__}")
             raise
-
     return inner
 
 
@@ -114,7 +114,7 @@ def main():
     # Create the Updater and pass it your bot's token.
     # Make sure to set use_context=True to use the new context based callbacks
     # Post version 12 this will no longer be necessary
-    updater = Updater("1433478214:AAHUY3C3tYgOwOK7Ilw6lJzPDbX55y2M9eA", use_context=True)
+    updater = Updater(tk.token, use_context=True)
 
     # Get the dispatcher to register handlers
     dispatcher = updater.dispatcher

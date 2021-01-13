@@ -38,12 +38,14 @@ def init_db(force: bool = False):
                         answer1 TEXT,
                         answer2 TEXT,
                         answer3 TEXT,
-                        answer4 TEXT
+                        answer4 TEXT,
+                        answer5 TEXT
                     )
                 ''')
                 line_count += 1
             else:
-                c.execute('INSERT INTO Quest VALUES (?,?,?,?,?,?)', (row[0], row[1], row[2], row[3], row[4], row[5]))
+                c.execute('INSERT INTO Quest VALUES (?,?,?,?,?,?,?)',
+                          (row[0], row[1], row[2], row[3], row[4], row[5], row[6]))
                 line_count += 1
 
     with open('database_config/main_QuestRules.csv', encoding='utf-8') as csv_file:
@@ -115,14 +117,6 @@ def get_quest_info(id_quest: int):
     c = conn.cursor()
     c.execute('SELECT * FROM Quest WHERE id_quest =?', (id_quest,))
     (res,) = c.fetchall()
-    return res
-
-
-def check_empty_table():
-    conn = get_connection()
-    c = conn.cursor()
-    c.execute('SELECT COUNT(*) FROM Answer')
-    (res,) = c.fetchone()
     return res
 
 
