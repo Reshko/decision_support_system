@@ -22,7 +22,7 @@ import logging
 import data_base as db
 from config import token as tk
 
-from telegram import Update, ReplyKeyboardMarkup
+from telegram import Update, ReplyKeyboardMarkup, ReplyKeyboardRemove
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext, ConversationHandler
 
 # Enable logging
@@ -76,6 +76,7 @@ def first_question(update: Update, context: CallbackContext) -> int:
 # TODO Реализовать хранением ответов пользователя UDP:Таблица с колонками вопросов
 #  || создать объект user_id {question:answer ... }
 # TODO глобальные переменные
+# TODO сделать проверку - если вопросов нет - выход
 @debug_requests
 def questions(update: Update, context: CallbackContext) -> int:
     user_answer = update.message.text
@@ -94,8 +95,14 @@ def questions(update: Update, context: CallbackContext) -> int:
 
 
 @debug_requests
-def cancel():
-    pass
+def cancel(update: Update, context: CallbackContext) -> int:
+    user = update.message.from_user
+    logger.info("User %s canceled the conversation.", user.first_name)
+    update.message.reply_text(
+        'Bye! I hope we can talk again some day.', reply_markup=ReplyKeyboardRemove()
+    )
+
+    return ConversationHandler.END
 
 
 @debug_requests
